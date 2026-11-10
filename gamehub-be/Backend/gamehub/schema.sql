@@ -18,8 +18,16 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_members_email ON members (lower(email));
 CREATE TABLE IF NOT EXISTS games (
     id BIGINT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    title_th VARCHAR(255) NOT NULL DEFAULT '',
+    original_title VARCHAR(255) NOT NULL DEFAULT '',
+    original_language VARCHAR(2) NOT NULL DEFAULT 'en',
+    genre VARCHAR(100) NOT NULL DEFAULT '',
+    release_date DATE,
     summary TEXT NOT NULL DEFAULT '',
+    summary_th TEXT NOT NULL DEFAULT '',
+    summary_en TEXT NOT NULL DEFAULT '',
     cover_url VARCHAR(500),
+    is_hidden BOOLEAN NOT NULL DEFAULT false,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

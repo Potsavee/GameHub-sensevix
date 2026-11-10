@@ -40,14 +40,15 @@ export async function getGame(gameId) {
 }
 
 function fromIGDB(game) {
+  const release = game.first_release_date ? new Date(game.first_release_date * 1000) : game.releaseDate ? new Date(game.releaseDate) : null;
   return {
     id: game.id,
     title: game.name,
-    genre: game.genres?.[0]?.name ?? null,
-    year: game.first_release_date ? new Date(game.first_release_date * 1000).getFullYear() : null,
+    genre: game.genres?.[0]?.name ?? game.genre ?? null,
+    year: release && !Number.isNaN(release.valueOf()) ? release.getFullYear() : null,
     rating: game.rating == null ? null : Math.round(game.rating / 10) / 10,
     detail: game.summary || 'ยังไม่มีคำอธิบายเกม',
-    poster: game.cover?.url ?? null,
+    poster: game.cover?.url ?? game.poster ?? null,
   };
 }
 
@@ -74,3 +75,7 @@ export async function getAdminMembers(token) {
 export function setMemberRole(memberId, role, token) {
   return apiFetch(`/api/admin/members/${memberId}/role`, { method: 'PUT', body: { role }, token });
 }
+export async function getAdminOverview(token) { return apiFetch('/api/admin/overview', { token }); }
+export async function getAdminGames(token) { return (await apiFetch('/api/admin/games', { token })).items; }
+export function deleteAdminGame(gameId, token) { return apiFetch(`/api/admin/games/${gameId}`, { method: 'DELETE', token }); }
+export function updateAdminGame(gameId, payload, token) { return apiFetch(`/api/admin/games/${gameId}`, { method: 'PUT', body: payload, token }); }

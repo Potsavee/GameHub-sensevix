@@ -15,6 +15,8 @@ import GameWishlist from './pages/GameWishlist';
 import NotFound from './pages/NotFound';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminMembers from './pages/admin/AdminMembers';
+import AdminOverview from './pages/admin/AdminOverview';
+import AdminGames from './pages/admin/AdminGames';
 import Profile from './pages/Profile';
 
 function App() {
@@ -34,7 +36,8 @@ function App() {
             <Route path="/me/wishlist" element={<ProtectedRoute><GameWishlist /></ProtectedRoute>} />
             {/* หลังบ้าน: ครอบทั้งกิ่งด้วย RequireRole ครั้งเดียว หน้าลูกทุกหน้าได้รับการป้องกันหมด */}
             <Route path="/admin" element={<RequireRole role="admin"><AdminLayout /></RequireRole>}>
-              <Route index element={<AdminMembers />} />
+              <Route index element={<AdminOverview />} />
+              <Route path="games" element={<AdminGames />} />
               <Route path="members" element={<AdminMembers />} />
             </Route>
             <Route path="/lab" element={<ApiLab />} />

@@ -8,9 +8,11 @@ function AdminLayout() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
       <div className="mb-6 flex flex-wrap items-center gap-3 border-b border-emerald-100 pb-4">
-        <h1 className="mr-2 text-xl font-semibold text-slate-900">จัดการ GameReview</h1>
+        <h1 className="mr-2 text-xl font-semibold text-slate-900">หลังบ้าน GameReview</h1>
         <nav className="flex flex-wrap gap-1">
-          <NavLink to="/admin" end className={tabClass}>สมาชิกและสิทธิ์</NavLink>
+          <NavLink to="/admin" end className={tabClass}>ภาพรวม</NavLink>
+          <NavLink to="/admin/games" className={tabClass}>จัดการเกม</NavLink>
+          <NavLink to="/admin/members" className={tabClass}>สมาชิกและสิทธิ์</NavLink>
         </nav>
       </div>
       <Outlet />

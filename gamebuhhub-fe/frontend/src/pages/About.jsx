@@ -11,8 +11,8 @@ function About() {
       <h2 className="mt-8 font-medium text-slate-900">ทีม</h2>
       <p className="text-sm text-slate-500">แก้รายชื่อด้านล่างเป็นของทีมตัวเอง</p>
       <ul className="mt-2 list-disc pl-5 text-slate-700">
-        <li>ชื่อ นามสกุล (รหัสนักศึกษา)</li>
-        <li>ชื่อ นามสกุล (รหัสนักศึกษา)</li>
+        <li>ธนกฤต วรรณศรี (670710203)</li>
+        <li>พศวีร์ สุทธิวานิช (670710726)</li>
       </ul>
 
       <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 md:flex-row md:items-center">
