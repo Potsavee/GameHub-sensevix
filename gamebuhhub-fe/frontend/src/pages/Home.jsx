@@ -1,7 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getGames } from '../api/backend';
-import FeaturedGames from '../components/FeaturedGames';
+import { getGames, getGameScreenshots } from '../api/backend';
+import GameActions from '../components/GameActions';
+import GameCard from '../components/GameCard';
+
+const FEATURED_LIMIT = 6;
+const RANDOM_PICKS_LIMIT = 4;
+const ROTATE_INTERVAL = 6000;
 
 function shuffle(list) {
   const copy = [...list];
@@ -13,31 +18,222 @@ function shuffle(list) {
 }
 
 export default function Home() {
+  const [allGames, setAllGames] = useState([]);
   const [picks, setPicks] = useState([]);
+  const [randomPicks, setRandomPicks] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [timerKey, setTimerKey] = useState(0);
   const [status, setStatus] = useState('loading');
+  const [mediaReady, setMediaReady] = useState(false);
+  const [heroImage, setHeroImage] = useState('');
+  const mediaCache = useRef({});
+
+  const preloadScreenshot = useCallback(game => {
+    const cachedEntry = mediaCache.current[game.id];
+    if (cachedEntry) return cachedEntry.promise;
+
+    const entry = { url: '', image: null, promise: null };
+    entry.promise = getGameScreenshots(game.id)
+      .then(screenshots => {
+        const url = screenshots.map(item => item.url).find(Boolean) || '';
+        if (!url) return '';
+
+        return new Promise(resolve => {
+          const image = new Image();
+          entry.image = image;
+          image.onload = () => resolve(url);
+          image.onerror = () => resolve('');
+          image.src = url;
+        });
+      })
+      .then(url => {
+        entry.url = url;
+        return url;
+      })
+      .catch(() => {
+        entry.url = '';
+        return '';
+      });
+
+    mediaCache.current[game.id] = entry;
+    return entry.promise;
+  }, []);
+
   useEffect(() => {
     let active = true;
-    getGames().then(games => { if (active) { setPicks(shuffle(games)); setStatus('success'); } })
-      .catch(() => { if (active) { setPicks([]); setStatus('error'); } });
+    getGames()
+      .then(games => {
+        if (!active) return;
+        setAllGames(games);
+        setPicks(shuffle(games).slice(0, FEATURED_LIMIT));
+        setRandomPicks(shuffle(games).slice(0, RANDOM_PICKS_LIMIT));
+        setStatus('success');
+      })
+      .catch(() => {
+        if (active) {
+          setPicks([]);
+          setStatus('error');
+        }
+      });
     return () => { active = false; };
   }, []);
 
-  return <div className="mx-auto max-w-5xl px-4 md:px-6">
-    <section className="py-14 md:py-20">
-      <p className="text-sm font-medium text-emerald-600">GameReview · React + Go + IGDB</p>
-      <h1 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-slate-900 md:text-5xl">ค้นหาเกม อ่านรีวิว แล้วเลือกเกมถัดไปของคุณ</h1>
-      <p className="mt-4 max-w-xl text-slate-600">ดูข้อมูลเกมจาก IGDB เขียนรีวิวกับสมาชิก และเก็บเกมที่อยากเล่นไว้ใน Wishlist</p>
-      <Link to="/games" className="mt-6 inline-block rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">สำรวจเกม</Link>
-    </section>
-    <section className="pb-12">
-      <div className="mb-4 flex items-end justify-between">
-        <div><h2 className="text-xl font-semibold text-slate-900">เกมแนะนำ</h2><p className="text-sm text-slate-500">ข้อมูลจาก IGDB</p></div>
-        <button disabled={status !== 'success'} onClick={() => setPicks(shuffle(picks))} className="text-sm text-emerald-600 hover:underline disabled:opacity-50">สุ่มใหม่</button>
+  const activeGame = picks[activeIndex];
+
+  function refreshRandomPicks() {
+    setRandomPicks(shuffle(allGames).slice(0, RANDOM_PICKS_LIMIT));
+  }
+
+  useEffect(() => {
+    if (!picks.length) return undefined;
+
+    let active = true;
+    setMediaReady(false);
+
+    // Load the first hero image first so it appears as soon as possible.
+    // Warm the remaining screenshot images in the background before rotating.
+    preloadScreenshot(picks[0])
+      .then(() => Promise.all(picks.slice(1).map(preloadScreenshot)))
+      .then(() => {
+        if (active) setMediaReady(true);
+      });
+
+    return () => { active = false; };
+  }, [picks, preloadScreenshot]);
+
+  useEffect(() => {
+    if (!activeGame) return undefined;
+
+    let active = true;
+    const cachedEntry = mediaCache.current[activeGame.id];
+    setHeroImage(cachedEntry?.url || '');
+
+    preloadScreenshot(activeGame).then(url => {
+      if (active) setHeroImage(url);
+    });
+
+    return () => { active = false; };
+  }, [activeGame, preloadScreenshot]);
+
+  useEffect(() => {
+    if (picks.length < 2 || !mediaReady) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex(index => (index + 1) % picks.length);
+    }, ROTATE_INTERVAL);
+    return () => window.clearInterval(timer);
+  }, [picks.length, mediaReady, timerKey]);
+
+  function selectGame(index) {
+    setActiveIndex(index);
+    setTimerKey(key => key + 1);
+  }
+
+  return (
+    <>
+    <div className="home-page">
+      <section className="home-featured" aria-label="เกมแนะนำ">
+        <div className="home-featured-heading">
+          <div>
+            <p className="home-featured-eyebrow">DISCOVER YOUR NEXT GAME</p>
+            <h1>เกมแนะนำ</h1>
+          </div>
+          <Link to="/games" className="home-all-games">ดูเกมทั้งหมด <span aria-hidden="true">↗</span></Link>
+        </div>
+
+        {status === 'loading' && (
+          <div className="home-featured-state" role="status">กำลังโหลดเกมแนะนำ…</div>
+        )}
+        {status === 'error' && (
+          <div className="home-featured-state" role="alert">โหลดเกมแนะนำไม่สำเร็จ ลองค้นหาเกมที่หน้าเกม</div>
+        )}
+        {status === 'success' && picks.length === 0 && (
+          <div className="home-featured-state">ยังไม่มีเกมแนะนำ</div>
+        )}
+
+        {status === 'success' && activeGame && (
+          <div className="featured-carousel">
+            <article className="featured-hero" aria-live="polite">
+              <div
+                key={activeGame.id}
+                className="featured-hero-image"
+                aria-hidden="true"
+                style={{ backgroundImage: heroImage
+                  ? `linear-gradient(90deg, rgba(8, 8, 10, .94) 0%, rgba(8, 8, 10, .72) 37%, rgba(8, 8, 10, .08) 78%), linear-gradient(0deg, rgba(8, 8, 10, .82), transparent 58%), url("${heroImage}")`
+                  : 'linear-gradient(135deg, #22232a, #101014 65%)' }}
+              />
+              <div className="featured-hero-content">
+                <p className="featured-tag">FEATURED GAME</p>
+                <h2>{activeGame.title}</h2>
+                <p className="featured-game-meta">
+                  {[activeGame.genre, activeGame.year, activeGame.rating != null && `★ ${activeGame.rating}/10`]
+                    .filter(Boolean).join(' · ') || 'ค้นพบเกมนี้จากคลัง IGDB'}
+                </p>
+                <p className="featured-game-description">{activeGame.detail || 'ดูรายละเอียดเกมและรีวิวจากสมาชิก GameReview'}</p>
+                <div className="featured-actions">
+                  <Link to={`/games/${activeGame.id}`} className="featured-play-button">ดูรายละเอียดเกม <span aria-hidden="true">↗</span></Link>
+                  <GameActions gameId={activeGame.id} />
+                </div>
+              </div>
+              <div className="featured-progress-track" aria-hidden="true">
+                <span
+                  key={activeGame.id}
+                  className={`featured-progress${mediaReady ? ' is-running' : ''}`}
+                />
+              </div>
+            </article>
+
+            <aside className="featured-game-list" aria-label="เลือกเกมแนะนำ">
+              {picks.map((game, index) => (
+                <button
+                  key={game.id}
+                  type="button"
+                  onClick={() => selectGame(index)}
+                  disabled={!mediaReady}
+                  aria-current={index === activeIndex ? 'true' : undefined}
+                  className={`featured-game-option${index === activeIndex ? ' is-active' : ''}`}
+                >
+                  {game.poster
+                    ? <img src={game.poster} alt="" loading="lazy" />
+                    : <span className="featured-game-placeholder" aria-hidden="true">🎮</span>}
+                  <span className="featured-game-option-title">{game.title}</span>
+                </button>
+              ))}
+            </aside>
+          </div>
+        )}
+      </section>
+    </div>
+
+    <section className="random-recommendations" aria-labelledby="random-recommendations-title">
+      <div className="random-recommendations-inner">
+        <div className="random-recommendations-heading">
+          <div>
+            <h2 id="random-recommendations-title">ไม่รู้จะเล่นเกมอะไร?</h2>
+            <p>ลองเกมที่เราสุ่มมาให้จากคลัง IGDB</p>
+          </div>
+          <button
+            type="button"
+            onClick={refreshRandomPicks}
+            disabled={status !== 'success' || allGames.length === 0}
+            className="random-refresh-button"
+          >
+            <span aria-hidden="true">⟳</span> สุ่มใหม่
+          </button>
+        </div>
+
+        {status === 'loading' && <p className="random-picks-state" role="status">กำลังโหลดเกม…</p>}
+        {status === 'error' && <p className="random-picks-state" role="alert">โหลดเกมไม่สำเร็จ</p>}
+        {status === 'success' && randomPicks.length > 0 && (
+          <div className="random-recommendations-grid">
+            {randomPicks.map(game => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        )}
       </div>
-      {status === 'loading' && <p role="status" className="py-10 text-center text-slate-500">กำลังโหลดเกมแนะนำ…</p>}
-      {status === 'error' && <p role="alert" className="py-10 text-center text-red-600">โหลดเกมแนะนำไม่สำเร็จ ลองค้นหาเกมที่หน้าเกม</p>}
-      {status === 'success' && picks.length === 0 && <p className="py-10 text-center text-slate-500">ยังไม่มีเกมแนะนำ</p>}
-      {status === 'success' && picks.length > 0 && <FeaturedGames games={picks} />}
     </section>
-  </div>;
+    </>
+  );
 }

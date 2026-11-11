@@ -26,5 +26,27 @@ export default function GameActions({ gameId }) {
     } catch (err) { setMessage(err.message || 'อัปเดต Wishlist ไม่สำเร็จ'); }
     finally { setBusy(false); }
   }
-  return <div className="mt-4 space-y-2"><button type="button" disabled={busy} onClick={toggleWishlist} aria-pressed={inWishlist} className="rounded-lg border border-emerald-200 px-4 py-2 text-sm text-slate-700 disabled:opacity-50">{inWishlist ? '♥ อยู่ใน Wishlist แล้ว' : '♡ เพิ่มเข้า Wishlist'}</button>{message && <p role="status" className="text-sm text-slate-500">{message}</p>}</div>;
+  return <div className="mt-4 space-y-2">
+    <button
+      type="button"
+      disabled={busy}
+      onClick={toggleWishlist}
+      aria-pressed={inWishlist}
+      className="inline-flex items-center gap-2 rounded-xl border border-[#CCE3E3] bg-white px-4 py-2.5 text-sm font-medium text-[#1E293B] transition duration-150 hover:bg-[#F8FAFC] active:scale-[0.97] active:bg-[#E6F2F2] disabled:cursor-wait disabled:opacity-60"
+    >
+      <svg
+        key={inWishlist ? 'filled-heart' : 'outline-heart'}
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        className={inWishlist ? 'wishlist-heart-pop h-5 w-5 fill-[#E53935] stroke-[#E53935]' : 'h-5 w-5 fill-none stroke-[#1E293B]'}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
+      </svg>
+      <span>{inWishlist ? 'อยู่ใน Wishlist แล้ว' : 'เพิ่มเข้า Wishlist'}</span>
+    </button>
+    {message && <p role="status" className="sr-only">{message}</p>}
+  </div>;
 }

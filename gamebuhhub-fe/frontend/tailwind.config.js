@@ -3,7 +3,7 @@ module.exports = {
   content: ['./src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      fontFamily: { sans: ['Prompt', 'system-ui', 'sans-serif'] },
+      fontFamily: { sans: ['Inter', 'Segoe UI', 'Arial', 'sans-serif'] },
     },
   },
   plugins: [],
