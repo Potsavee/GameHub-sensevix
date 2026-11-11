@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RequireRole from './components/RequireRole';
 import Home from './pages/Home';
 import Games from './pages/Games';
+import GameQuiz from './pages/GameQuiz';
 import GameDetail from './pages/GameDetail';
 import ApiLab from './pages/ApiLab';
 import About from './pages/About';
@@ -29,6 +30,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/games" element={<Games />} />
+            <Route path="/quiz" element={<GameQuiz />} />
             <Route path="/games/:id" element={<GameDetail />} />
             <Route path="/me/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />

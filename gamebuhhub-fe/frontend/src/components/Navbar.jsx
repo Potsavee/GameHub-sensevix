@@ -49,6 +49,7 @@ function Navbar() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <NavLink to="/" end className={linkClass}>Home</NavLink>
             <NavLink to="/games" className={linkClass}>Games</NavLink>
+            <NavLink to="/quiz" className={linkClass}>Game Quiz</NavLink>
             {isLoggedIn && <NavLink to="/me/wishlist" className={linkClass}>Wishlist</NavLink>}
             <NavLink to="/about" className={linkClass}>About</NavLink>
             {isAdmin && <NavLink to="/admin" className={linkClass}>Admin</NavLink>}

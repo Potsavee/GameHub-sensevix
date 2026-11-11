@@ -48,9 +48,13 @@ function AdminMembers() {
   }
 
   const q = query.trim().toLowerCase();
-  const shown = members.filter(m =>
-    q === '' || m.displayName.toLowerCase().includes(q) || m.email.toLowerCase().includes(q)
-  );
+  const shown = members
+    .filter(m => q === '' || m.displayName.toLowerCase().includes(q) || m.email.toLowerCase().includes(q))
+    .sort((a, b) => {
+      const dateA = Date.parse(a.createdAt || '') || 0;
+      const dateB = Date.parse(b.createdAt || '') || 0;
+      return dateB - dateA;
+    });
 
   return (
     <div>

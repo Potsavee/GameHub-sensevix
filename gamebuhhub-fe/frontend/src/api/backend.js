@@ -58,6 +58,7 @@ function fromIGDB(game) {
       ? release.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
       : null,
     rating: game.rating == null ? null : Math.round(game.rating) / 10,
+    ratingCount: game.ratingCount ?? game.rating_count ?? null,
     detail: game.summary || 'ยังไม่มีคำอธิบายเกม',
     poster: game.cover?.url ?? game.poster ?? null,
     screenshots: (game.screenshots || []).map(image => ({
