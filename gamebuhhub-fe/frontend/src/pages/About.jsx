@@ -20,7 +20,7 @@ function About() {
           IGDB
         </a>
         <p className="text-sm text-slate-500">
-          ข้อมูลเกมและภาพปกดึงจาก IGDB ผ่าน Go backend
+          ข้อมูลเกมและภาพดึงจาก IGDB ผ่าน Go backend
         </p>
       </div>
     </div>

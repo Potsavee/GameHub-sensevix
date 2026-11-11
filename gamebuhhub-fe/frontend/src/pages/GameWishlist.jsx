@@ -41,7 +41,7 @@ export default function GameWishlist() {
         setGames(items);
         setStatus('success');
 
-        // Fetch each game's release year when it isn't included in the wishlist response.
+        // ดึงปีจากรายละเอียดเกม ถ้า API Wishlist ไม่มีข้อมูลปี
         Promise.all(
           items
             .filter((game) => !game.year)
@@ -54,14 +54,14 @@ export default function GameWishlist() {
               }
             }),
         ).then((updates) => {
-          if (active) {
-            setGames((current) =>
-              current.map((game) => {
-                const update = updates.find((item) => item.id === game.id);
-                return update ? { ...game, year: update.year } : game;
-              }),
-            );
-          }
+          if (!active) return;
+
+          setGames((current) =>
+            current.map((game) => {
+              const update = updates.find((item) => item.id === game.id);
+              return update ? { ...game, year: update.year } : game;
+            }),
+          );
         });
       })
       .catch((err) => {
@@ -84,7 +84,9 @@ export default function GameWishlist() {
       await removeGameFromWishlist(gameId, token);
       setRemovingId(null);
       setLeavingId(gameId);
+
       await new Promise((resolve) => window.setTimeout(resolve, 220));
+
       setGames((current) => current.filter((game) => game.id !== gameId));
     } catch (err) {
       setError(err);
@@ -173,7 +175,7 @@ export default function GameWishlist() {
           {visibleGames.map((game) => (
             <article
               key={game.id}
-              className={`group overflow-hidden rounded-xl border border-emerald-100 bg-white transition hover:border-emerald-300 hover:shadow-md${
+              className={`group overflow-hidden rounded-xl border border-emerald-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl${
                 leavingId === game.id ? ' wishlist-card-out' : ''
               }`}
             >
@@ -183,10 +185,10 @@ export default function GameWishlist() {
                     src={game.poster}
                     alt={`ปกเกม ${game.title}`}
                     loading="lazy"
-                    className="aspect-[2/3] w-full object-cover"
+                    className="aspect-[2/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                   />
                 ) : (
-                  <div className="grid aspect-[2/3] w-full place-items-center bg-slate-100 text-4xl">
+                  <div className="grid aspect-[2/3] w-full place-items-center bg-slate-100 text-4xl transition-transform duration-500 group-hover:scale-[1.035]">
                     🎮
                   </div>
                 )}

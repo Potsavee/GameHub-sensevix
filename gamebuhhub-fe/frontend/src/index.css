@@ -58,7 +58,7 @@ body {
 }
 
 .random-recommendations-inner {
-  width: min(1220px, 100%);
+  width: min(1320px, 100%);
   margin: 0 auto;
 }
 
@@ -992,4 +992,179 @@ footer { background-color: #17171b !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .wishlist-card-out { animation-duration: 1ms; }
+}
+
+.popular-genres {
+  margin: 22px 0 28px;
+}
+
+.popular-genres-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.popular-genres-heading h2 {
+  color: var(--epic-text);
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.03em;
+}
+
+.popular-genres-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.popular-genres-controls button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #29292e;
+  color: #f5f5f7;
+  font-size: 26px;
+  line-height: 1;
+  transition: background .18s, transform .18s;
+}
+
+.popular-genres-controls button:hover {
+  transform: scale(1.05);
+  background: #3a3a40;
+}
+
+.genre-carousel-track {
+  display: grid;
+  grid-auto-columns: calc((100% - 48px) / 4);
+  grid-auto-flow: column;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 2px 1px 10px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.genre-carousel-track::-webkit-scrollbar { display: none; }
+
+.genre-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: #202024;
+  padding: 14px 14px 16px;
+  color: var(--epic-text);
+  text-align: center;
+  scroll-snap-align: start;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+
+.genre-card:hover {
+  transform: translateY(-2px);
+  background: #29292e;
+}
+
+.genre-card.is-selected {
+  border-color: var(--epic-accent);
+  background: #29292e;
+}
+
+.genre-card-art {
+  position: relative;
+  display: block;
+  height: clamp(130px, 15vw, 190px);
+  overflow: hidden;
+  border-radius: 8px;
+  background: #141418;
+}
+
+.genre-card-art::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, .18), transparent 45%);
+  content: '';
+  pointer-events: none;
+}
+
+.genre-cover {
+  position: absolute;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.genre-cover-1 { left: 0; opacity: .82; }
+.genre-cover-2 { z-index: 2; left: 30%; box-shadow: 0 0 18px rgba(0, 0, 0, .4); }
+.genre-cover-3 { left: 60%; opacity: .82; }
+.genre-card-art img:only-child { left: 20%; width: 60%; }
+.genre-card-art img:first-child:last-of-type { left: 20%; width: 60%; }
+.genre-card-art img:first-child:nth-last-of-type(2) { left: 10%; width: 40%; }
+.genre-card-art img:first-child:nth-last-of-type(2) + img { left: 50%; width: 40%; }
+
+.genre-card-placeholder {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background: radial-gradient(circle at center, #36363d, #141418 72%);
+  font-size: 42px;
+}
+
+.genre-card-title {
+  display: block;
+  overflow: hidden;
+  margin-top: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.genre-card-count {
+  display: block;
+  margin-top: 4px;
+  color: var(--epic-muted);
+  font-size: 12px;
+}
+
+.clear-genre-filter {
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  color: var(--epic-accent);
+  font-size: 13px;
+}
+
+.clear-genre-filter:hover { color: #7bd5ff; }
+.clear-genre-filter.is-hidden { visibility: hidden; pointer-events: none; }
+
+@media (max-width: 900px) {
+  .genre-carousel-track { grid-auto-columns: calc((100% - 32px) / 3); }
+}
+
+@media (max-width: 640px) {
+  .genre-carousel-track { grid-auto-columns: minmax(240px, 78%); gap: 12px; }
+  .genre-card-art { height: 170px; }
+}
+
+.random-recommendations-grid {
+  max-width: 1200px;
+  margin-inline: auto;
+  grid-template-columns: repeat(4, minmax(0, 280px));
+  justify-content: space-between;
+}
+
+@media (max-width: 760px) {
+  .random-recommendations-grid {
+    max-width: 500px;
+    grid-template-columns: repeat(2, minmax(0, 240px));
+    justify-content: center;
+  }
 }

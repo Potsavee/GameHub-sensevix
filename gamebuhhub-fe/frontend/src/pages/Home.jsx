@@ -137,7 +137,7 @@ export default function Home() {
         <div className="home-featured-heading">
           <div>
             <p className="home-featured-eyebrow">DISCOVER YOUR NEXT GAME</p>
-            <h1>เกมแนะนำ</h1>
+            <h1>Recommended games</h1>
           </div>
           <Link to="/games" className="home-all-games">ดูเกมทั้งหมด <span aria-hidden="true">↗</span></Link>
         </div>
@@ -210,8 +210,8 @@ export default function Home() {
       <div className="random-recommendations-inner">
         <div className="random-recommendations-heading">
           <div>
-            <h2 id="random-recommendations-title">ไม่รู้จะเล่นเกมอะไร?</h2>
-            <p>ลองเกมที่เราสุ่มมาให้จากคลัง IGDB</p>
+            <h2 id="random-recommendations-title">Game Randomizer</h2>
+            <p>ไม่รู้จะเล่นอะไร? ลองเล่นเกมที่สุ่มเลือกมาจาก IGDB</p>
           </div>
           <button
             type="button"
@@ -219,7 +219,7 @@ export default function Home() {
             disabled={status !== 'success' || allGames.length === 0}
             className="random-refresh-button"
           >
-            <span aria-hidden="true">⟳</span> สุ่มใหม่
+            <span aria-hidden="true">⟳</span> Reroll
           </button>
         </div>
 
