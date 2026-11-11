@@ -41,6 +41,7 @@ func main() {
 	mux.HandleFunc("POST /api/auth/login", h.Login)
 	mux.HandleFunc("GET /api/games", h.SearchGames)
 	mux.HandleFunc("GET /api/games/{id}", h.GetGame)
+	mux.HandleFunc("GET /api/games/{id}/screenshots", h.GetGameScreenshots)
 	mux.HandleFunc("GET /api/games/{id}/reviews", h.ListGameReviews)
 
 	mux.HandleFunc("GET /api/me", login(h.Me))

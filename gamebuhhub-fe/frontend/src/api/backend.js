@@ -38,6 +38,14 @@ export async function getGames(query = '') {
 export async function getGame(gameId) {
   return fromIGDB(await apiFetch(`/api/games/${gameId}`));
 }
+export async function getGameVideos(gameId) {
+  const response = await apiFetch(`/api/games/${gameId}/videos`);
+  return response.items ?? [];
+}
+export async function getGameScreenshots(gameId) {
+  const response = await apiFetch(`/api/games/${gameId}/screenshots`);
+  return response.items ?? [];
+}
 
 function fromIGDB(game) {
   const release = game.first_release_date ? new Date(game.first_release_date * 1000) : game.releaseDate ? new Date(game.releaseDate) : null;
@@ -46,15 +54,21 @@ function fromIGDB(game) {
     title: game.name,
     genre: game.genres?.[0]?.name ?? game.genre ?? null,
     year: release && !Number.isNaN(release.valueOf()) ? release.getFullYear() : null,
-    rating: game.rating == null ? null : Math.round(game.rating / 10) / 10,
+    releaseDate: release && !Number.isNaN(release.valueOf())
+      ? release.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
+      : null,
+    rating: game.rating == null ? null : Math.round(game.rating) / 10,
     detail: game.summary || 'ยังไม่มีคำอธิบายเกม',
     poster: game.cover?.url ?? game.poster ?? null,
+    screenshots: (game.screenshots || []).map(image => ({
+      url: image.url?.startsWith('//') ? `https:${image.url}` : image.url,
+    })).filter(image => image.url),
   };
 }
 
 export function getReviews(gameId) { return apiFetch(`/api/games/${gameId}/reviews`); }
-export function postReview(gameId, text, token) {
-  return apiFetch(`/api/games/${gameId}/reviews`, { method: 'POST', body: { text }, token });
+export function postReview(gameId, text, score, token) {
+  return apiFetch(`/api/games/${gameId}/reviews`, { method: 'POST', body: { text, score }, token });
 }
 export function deleteGameReview(reviewId, token) {
   return apiFetch(`/api/game-reviews/${reviewId}`, { method: 'DELETE', token });
