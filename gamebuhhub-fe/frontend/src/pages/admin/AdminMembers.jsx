@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { getAdminMembers, setMemberRole } from '../../api/backend';
-import { ErrorBox, Loading, ConfirmBox, inputClass } from '../../components/admin/AdminStates';
+import { ErrorBox, Loading, ConfirmBox } from '../../components/admin/AdminStates';
 
 const dateTH = (iso) => new Date(iso).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -63,7 +63,14 @@ function AdminMembers() {
           <h2 className="text-lg font-semibold text-slate-900">สมาชิก</h2>
           {status === 'success' && <p className="text-sm text-slate-500">ทั้งหมด {members.length} คน (admin {members.filter(m => m.role === 'admin').length})</p>}
         </div>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ค้นชื่อหรืออีเมล" className={inputClass + ' md:w-64'} />
+        <label className="relative block w-full md:w-64">
+          <span className="sr-only">ค้นชื่อหรืออีเมล</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m16 16 4 4" />
+          </svg>
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ค้นชื่อหรืออีเมล" className="h-10 w-full rounded-lg border border-slate-300 bg-white py-1.5 pl-9 pr-3 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100" />
+        </label>
       </div>
 
       {actionError && <p className="mb-3 text-sm text-red-600">{actionError}</p>}
@@ -71,7 +78,13 @@ function AdminMembers() {
       {status === 'error' && <ErrorBox error={error} onRetry={() => setReloadKey(k => k + 1)} />}
       {status === 'success' && (
         <div className="overflow-x-auto rounded-xl border border-emerald-100 bg-white">
-          <table className="w-full text-sm">
+          <table className="w-full table-fixed text-sm">
+            <colgroup>
+              <col className="w-[40%]" />
+              <col className="w-[16%]" />
+              <col className="w-[22%]" />
+              <col className="w-[22%]" />
+            </colgroup>
             <thead className="bg-emerald-50/60 text-left text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-4 py-3">สมาชิก</th>
@@ -86,8 +99,15 @@ function AdminMembers() {
                 return (
                   <tr key={m.id} className="hover:bg-emerald-50/40">
                     <td className="px-4 py-2">
-                      <p className="font-medium text-slate-900">{m.displayName} {isMe && <span className="text-xs text-slate-400">(คุณ)</span>}</p>
-                      <p className="text-xs text-slate-500">{m.email}</p>
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-700 text-sm font-semibold text-white">
+                          {m.displayName?.trim()?.charAt(0)?.toUpperCase() || '?'}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate font-medium text-slate-900">{m.displayName} {isMe && <span className="text-xs text-slate-400">(คุณ)</span>}</p>
+                          <p className="truncate text-xs text-slate-500" title={m.email}>{m.email}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-2">
                       <span className={'rounded-full px-2 py-0.5 text-xs ' + (m.role === 'admin' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600')}>
@@ -96,10 +116,18 @@ function AdminMembers() {
                     </td>
                     <td className="px-4 py-2 text-slate-600">{m.createdAt ? dateTH(m.createdAt) : '-'}</td>
                     <td className="px-4 py-2 text-right">
-                      <button onClick={() => setTarget(m)} disabled={isMe}
-                              className="text-emerald-600 hover:underline disabled:cursor-not-allowed disabled:text-slate-300">
-                        {m.role === 'admin' ? 'ลดเป็น member' : 'เลื่อนเป็น admin'}
-                      </button>
+                      {isMe ? (
+                        <span className="inline-flex rounded-full bg-slate-700 px-3 py-1 text-xs font-medium text-slate-200">บัญชีปัจจุบัน</span>
+                      ) : (
+                        <button
+                          onClick={() => setTarget(m)}
+                          className={m.role === 'admin'
+                            ? 'rounded-md px-2.5 py-1.5 text-amber-400 transition hover:bg-amber-400/10 hover:text-amber-300'
+                            : 'rounded-md px-2.5 py-1.5 text-sky-400 transition hover:bg-sky-400/10 hover:text-sky-300'}
+                        >
+                          {m.role === 'admin' ? 'ลดเป็น member' : 'เลื่อนเป็น admin'}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
