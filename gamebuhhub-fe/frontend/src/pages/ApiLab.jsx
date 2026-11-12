@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiFetch, getGames } from '../api/backend';
+import { apiFetch, getGames, searchGames } from '../api/backend';
 
 export default function ApiLab() {
   const [query, setQuery] = useState('Grand Theft Auto V');
@@ -8,7 +8,7 @@ export default function ApiLab() {
   const [ms, setMs] = useState(null);
   const [requestPath, setRequestPath] = useState('/api/games');
 
-  const searchPath = `/api/games${query.trim() ? `?q=${encodeURIComponent(query.trim())}` : ''}`;
+  const searchPath = `/api/games?q=${encodeURIComponent(query.trim())}`;
 
   async function run(path, request) {
     setStatus('loading');
@@ -70,7 +70,7 @@ export default function ApiLab() {
         <button
           type="button"
           disabled={status === 'loading'}
-          onClick={() => run(searchPath, () => getGames(query.trim()))}
+          onClick={() => run(searchPath, () => searchGames(query.trim()))}
           className="api-lab-mapped"
         >
           ผ่าน fromIGDB()

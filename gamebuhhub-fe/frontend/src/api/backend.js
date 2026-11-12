@@ -35,6 +35,10 @@ export async function getGames(query = '') {
   const response = await apiFetch(path);
   return response.items.map(fromIGDB);
 }
+export async function searchGames(query = '') {
+  const response = await apiFetch(`/api/games?q=${encodeURIComponent(query)}`);
+  return response.items.map(fromIGDB);
+}
 export async function getGame(gameId) {
   return fromIGDB(await apiFetch(`/api/games/${gameId}`));
 }

@@ -150,29 +150,77 @@ func knownSeriesKey(name string) string {
 
 func (h *Handler) SearchGames(w http.ResponseWriter, r *http.Request) {
 	term := strings.TrimSpace(r.URL.Query().Get("q"))
+
+	// ถ้าส่ง q มาแต่ว่าง ให้คืนรายการว่าง ไม่ดึงเกมยอดนิยม
+	if r.URL.Query().Has("q") && term == "" {
+		writeJSON(w, http.StatusOK, map[string]any{"items": []Game{}})
+		return
+	}
+
 	dbTerm := term
-	if strings.EqualFold(term, "gta") { dbTerm = "Grand Theft Auto" }
+	if strings.EqualFold(term, "gta") {
+		dbTerm = "Grand Theft Auto"
+	}
+
 	items, err := h.Store.ListCatalogGames(r.Context(), dbTerm, false)
-	if err != nil { internal(w, err); return }
-	// Only seed from IGDB once, when the catalog is empty and the user opens
-	// the browse page. All later searches and page loads use Supabase only.
+	if err != nil {
+		internal(w, err)
+		return
+	}
+
+	// เติมแค็ตตาล็อกจาก IGDB เฉพาะครั้งแรก เมื่อยังไม่มีข้อมูลและไม่มีคำค้น
 	if len(items) == 0 && term == "" {
 		games, fetchErr := h.searchIGDB(r.Context(), "")
-		if fetchErr != nil && len(items) == 0 { internal(w, fetchErr); return }
-		if fetchErr == nil {
+		if fetchErr != nil {
+			internal(w, fetchErr)
+			return
+		}
+
 		for i := range games {
 			var cover *string
-			if games[i].Cover != nil { games[i].Cover.URL = "https:" + strings.Replace(games[i].Cover.URL, "t_thumb", "t_cover_big", 1); cover = &games[i].Cover.URL }
+			if games[i].Cover != nil {
+				games[i].Cover.URL = "https:" + strings.Replace(
+					games[i].Cover.URL,
+					"t_thumb",
+					"t_cover_big",
+					1,
+				)
+				cover = &games[i].Cover.URL
+			}
+
 			genre := ""
-			if len(games[i].Genres) > 0 { genre = games[i].Genres[0].Name }
+			if len(games[i].Genres) > 0 {
+				genre = games[i].Genres[0].Name
+			}
+
 			var releaseDate *time.Time
-			if games[i].FirstReleaseDate > 0 { date := time.Unix(games[i].FirstReleaseDate, 0).UTC(); releaseDate = &date }
-			if err := h.Store.SaveGame(r.Context(), games[i].ID, games[i].Name, games[i].Summary, genre, releaseDate, cover, games[i].RatingCount); err != nil { internal(w, err); return }
+			if games[i].FirstReleaseDate > 0 {
+				date := time.Unix(games[i].FirstReleaseDate, 0).UTC()
+				releaseDate = &date
+			}
+
+			if err := h.Store.SaveGame(
+				r.Context(),
+				games[i].ID,
+				games[i].Name,
+				games[i].Summary,
+				genre,
+				releaseDate,
+				cover,
+				games[i].RatingCount,
+			); err != nil {
+				internal(w, err)
+				return
+			}
 		}
+
 		items, err = h.Store.ListCatalogGames(r.Context(), dbTerm, false)
+		if err != nil {
+			internal(w, err)
+			return
 		}
 	}
-	if err != nil { internal(w, err); return }
+
 	writeJSON(w, http.StatusOK, map[string]any{"items": items})
 }
 

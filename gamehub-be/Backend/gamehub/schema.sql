@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS games (
     summary_th TEXT NOT NULL DEFAULT '',
     summary_en TEXT NOT NULL DEFAULT '',
     cover_url VARCHAR(500),
+    igdb_rating_count INTEGER NOT NULL DEFAULT 0,
+    screenshot_urls JSONB NOT NULL DEFAULT '[]'::jsonb,
+    screenshots_cached_at TIMESTAMPTZ,
     is_hidden BOOLEAN NOT NULL DEFAULT false,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
