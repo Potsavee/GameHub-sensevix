@@ -16,7 +16,14 @@ export default function GameActions({ gameId }) {
     }).catch(() => { if (active) setMessage('โหลดสถานะ Wishlist ไม่สำเร็จ'); });
     return () => { active = false; };
   }, [gameId, isLoggedIn, token]);
-  if (!isLoggedIn) return <p className="mt-4 text-sm text-slate-500"><Link to="/login" className="text-emerald-600 hover:underline">เข้าสู่ระบบ</Link> เพื่อเพิ่มเกมเข้ารายการที่อยากเล่น</p>;
+  if (!isLoggedIn) return (
+    <div className="guest-wishlist-prompt text-sm text-slate-500">
+      <span>
+        <Link to="/login" className="text-emerald-600 hover:underline">เข้าสู่ระบบ</Link>{' '}
+        เพื่อเพิ่มเกมเข้ารายการที่อยากเล่น
+      </span>
+    </div>
+  );
 
   async function toggleWishlist() {
     setBusy(true); setMessage('');
