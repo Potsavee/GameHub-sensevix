@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getGames, getGameScreenshots } from '../api/backend';
 
@@ -84,6 +84,7 @@ export default function GameQuiz() {
   const [countdownStarted, setCountdownStarted] = useState(false);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
+  const feedbackRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -120,6 +121,19 @@ export default function GameQuiz() {
       window.clearTimeout(timer);
     };
   }, [selectedId, status]);
+
+  useEffect(() => {
+    if (selectedId === null) return undefined;
+    const frame = requestAnimationFrame(() => {
+      const feedback = feedbackRef.current;
+      if (!feedback) return;
+      const rect = feedback.getBoundingClientRect();
+      const bottomGap = 24;
+      const overflow = rect.bottom - (window.innerHeight - bottomGap);
+      if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [selectedId]);
 
   useEffect(() => {
     if (status !== 'ready' || games.length === 0) return undefined;
@@ -219,14 +233,14 @@ export default function GameQuiz() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8 md:px-6">
+    <main className="mx-auto max-w-[55rem] px-4 py-5 md:px-6">
       <section className="overflow-hidden rounded-2xl border border-[#3a3a3a] bg-[#202024] shadow-xl">
-        <div className="border-b border-[#3a3a3a] p-6 md:p-8">
+        <div className="border-b border-[#3a3a3a] p-4 md:p-5">
           <p className="text-xs font-bold uppercase tracking-[.18em] text-sky-400">GameReview mini game</p>
-          <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-white">Game Quiz</h1>
-              <p className="mt-2 text-sm text-slate-400">
+              <h1 className="text-2xl font-bold tracking-tight text-white">Game Quiz</h1>
+              <p className="mt-1.5 text-sm text-slate-400">
                 {status === 'playing' ? `คะแนนปัจจุบัน ${score} / ${QUESTION_COUNT}` : 'เลือกเกมทาย 1 ใน 2 แบบ เล่นแบบละ 5 ข้อ มี 3 ตัวเลือกต่อข้อ'}
               </p>
             </div>
@@ -248,20 +262,20 @@ export default function GameQuiz() {
             )}
           </div>
           {status === 'playing' && !isFinished && (
-            <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-label={`ความคืบหน้า ${questionIndex + 1} จาก ${QUESTION_COUNT}`}>
+            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-label={`ความคืบหน้า ${questionIndex + 1} จาก ${QUESTION_COUNT}`}>
               <div className="h-full rounded-full bg-sky-500 transition-all" style={{ width: `${((questionIndex + 1) / QUESTION_COUNT) * 100}%` }} />
             </div>
           )}
         </div>
 
-        <div className="p-6 md:p-8">
+        <div className="p-4 md:p-5">
           {status === 'loading' && <p role="status" className="py-16 text-center text-slate-400">กำลังโหลดเกม…</p>}
           {status === 'error' && <div role="alert" className="py-12 text-center"><p className="text-red-300">{error}</p>{games.length > 0 && <button type="button" onClick={backToModes} className="mt-4 rounded-lg border border-slate-600 px-4 py-2 text-slate-200 transition hover:bg-slate-700">กลับไปเลือกโหมด</button>}<Link to="/games" className="mt-4 ml-4 inline-block text-sm text-sky-400 hover:underline">ไปดูเกมทั้งหมด</Link></div>}
 
           {status === 'ready' && (
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { id: 'year', title: 'Time Traveler', description: 'เลือกเกมที่วางจำหน่ายเก่าที่สุดจาก 3 เกม'},
+                { id: 'year', title: 'Time Traveler', description: 'เลือกเกมที่วางจำหน่ายเก่าที่สุดจาก 3 เกม' },
                 { id: 'rating', title: 'Rating Rumble', description: 'เลือกเกมที่มีผู้ให้คะแนนมากที่สุดจาก 3 เกม'},
                 ].map(item => {
                   const background = modeBackgrounds[item.id];
@@ -298,14 +312,14 @@ export default function GameQuiz() {
 
           {status === 'playing' && !isFinished && question && (
             <>
-              <div className="mb-6 text-center">
-                <p className="text-sm text-slate-400">{question.mode === 'rating' ? 'Rating Rumble' : 'Time Traveler'}</p>
+              <div className="mb-4 text-center">
+                <p className="text-sm text-slate-400">{question.mode === 'rating' ? 'จำนวน Rating จาก IGDB' : 'ปีที่วางจำหน่าย'}</p>
                 <h2 className="mt-1 text-xl font-semibold text-white">
                   {mode === 'rating' ? 'เกมไหนมีผู้ให้ Rating มากที่สุด?' : 'เกมไหนเก่าที่สุด?'}
                 </h2>
               </div>
 
-              <div className="mx-auto grid max-w-[700px] grid-cols-1 justify-items-center gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mx-auto grid max-w-[600px] grid-cols-1 justify-items-center gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {question.games.map(game => {
                   const answered = selectedId !== null;
                   const correct = game.id === question.correctId;
@@ -316,7 +330,7 @@ export default function GameQuiz() {
                       type="button"
                       onClick={() => answer(game.id)}
                       disabled={answered}
-                      className={`group w-[200px] max-w-full justify-self-center overflow-hidden rounded-xl border border-[#3a3a3a] text-left transition-all duration-200 ${
+                      className={`group w-[180px] max-w-full justify-self-center overflow-hidden rounded-xl border border-[#3a3a3a] text-left transition-all duration-200 ${
                         answered && correct
                           ? 'border-emerald-400 bg-emerald-950/40'
                           : chosenWrong
@@ -333,7 +347,7 @@ export default function GameQuiz() {
                           <div className="grid aspect-[2/3] w-full place-items-center bg-slate-800 text-6xl" aria-hidden="true">🎮</div>
                         )}
                       </div>
-                      <div className={`min-h-[68px] p-3 ${answered && correct ? 'bg-emerald-950/40' : chosenWrong ? 'bg-red-950/40' : ''}`}>
+                      <div className={`min-h-[60px] p-2.5 ${answered && correct ? 'bg-emerald-950/40' : chosenWrong ? 'bg-red-950/40' : ''}`}>
                         <span className="block min-h-10 whitespace-normal break-words text-sm font-semibold leading-5 text-white">{game.title}</span>
                         {answered && (
                           <span className={`mt-1 block text-xs font-medium ${correct ? 'text-emerald-300' : chosenWrong ? 'text-red-300' : 'text-slate-300'}`}>
@@ -349,12 +363,12 @@ export default function GameQuiz() {
               </div>
 
               {selectedId !== null && (
-                <div className="mt-6 rounded-xl bg-slate-800/70 p-4">
+                <div ref={feedbackRef} className="mt-4 rounded-xl bg-slate-800/70 p-3">
                   <p className={`font-semibold ${selectedId === question.correctId ? 'text-emerald-300' : 'text-amber-200'}`}>
                     {selectedId === question.correctId ? 'ถูกต้อง!' : 'เกือบถูกแล้ว!'}
                   </p>
                   <p className="mt-2 text-xs text-slate-400">
-                    {questionIndex === QUESTION_COUNT - 1 ? 'กำลังสรุปคะแนน…' : 'ข้อต่อไปอัตโนมัติ'}
+                    {questionIndex === QUESTION_COUNT - 1 ? 'กำลังสรุปคะแนน…' : 'ไปข้อถัดไปอัตโนมัติ'}
                   </p>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-700" aria-label="นับถอยหลังก่อนเปลี่ยนข้อ">
                     <div

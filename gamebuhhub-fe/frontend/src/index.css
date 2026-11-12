@@ -16,7 +16,7 @@ body {
 }
 
 .home-featured {
-  width: min(1320px, 100%);
+  width: min(1040px, 100%);
   margin: 0 auto;
 }
 
@@ -58,7 +58,7 @@ body {
 }
 
 .random-recommendations-inner {
-  width: min(1320px, 100%);
+  width: min(1040px, 100%);
   margin: 0 auto;
 }
 
@@ -148,15 +148,15 @@ body {
 
 .featured-carousel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 218px;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 12px;
   align-items: stretch;
 }
 
 .featured-hero {
   position: relative;
   display: flex;
-  height: clamp(420px, 64vh, 560px);
+  height: clamp(350px, 48vh, 420px);
   min-height: 0;
   overflow: hidden;
   align-items: end;
@@ -181,8 +181,8 @@ body {
 }
 
 .featured-hero-content {
-  width: min(580px, 75%);
-  padding: clamp(24px, 4vw, 54px);
+  width: min(500px, 75%);
+  padding: clamp(24px, 3vw, 40px);
 }
 
 .featured-tag { color: #e5e7eb; }
@@ -190,7 +190,7 @@ body {
 .featured-hero-content h2 {
   margin-top: 12px;
   color: #fff;
-  font-size: clamp(32px, 4.2vw, 56px);
+  font-size: clamp(30px, 3.4vw, 46px);
   font-weight: 700;
   letter-spacing: -.035em;
   line-height: 1.05;
@@ -213,7 +213,7 @@ body {
   font-size: 14px;
   line-height: 1.65;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
 }
 
 .featured-actions {
@@ -269,7 +269,7 @@ body {
 
 .featured-game-list {
   display: flex;
-  height: clamp(420px, 64vh, 560px);
+  height: clamp(350px, 48vh, 420px);
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
@@ -316,7 +316,7 @@ body {
 @media (max-width: 760px) {
   .home-page { padding: 20px 14px 32px; }
   .featured-carousel { grid-template-columns: 1fr; gap: 12px; }
-  .featured-hero { height: clamp(360px, 58vh, 460px); }
+  .featured-hero { height: clamp(320px, 50vh, 400px); }
   .featured-hero-content { width: 100%; padding: 28px 22px; }
   .featured-game-list { height: auto; max-height: none; flex-direction: row; gap: 8px; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
   .featured-game-option { min-width: 180px; min-height: 64px; flex: 0 0 180px; }
@@ -328,7 +328,7 @@ body {
 @media (max-width: 480px) {
   .home-featured-heading h1 { font-size: 25px; }
   .random-recommendations-heading h2 { font-size: 19px; }
-  .featured-hero { height: 390px; }
+  .featured-hero { height: 360px; }
   .featured-hero-content h2 { font-size: 34px; }
   .featured-game-description { font-size: 13px; }
   .featured-actions { gap: 8px; }
@@ -1155,16 +1155,17 @@ footer { background-color: #17171b !important; }
 }
 
 .random-recommendations-grid {
-  max-width: 1200px;
+  max-width: 1000px;
   margin-inline: auto;
-  grid-template-columns: repeat(4, minmax(0, 280px));
+  grid-template-columns: repeat(4, minmax(0, 220px));
+  gap: 16px;
   justify-content: space-between;
 }
 
 @media (max-width: 760px) {
   .random-recommendations-grid {
-    max-width: 500px;
-    grid-template-columns: repeat(2, minmax(0, 240px));
+    max-width: 460px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: center;
   }
 }
