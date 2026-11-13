@@ -2,7 +2,7 @@ function About() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 md:px-6">
       <h1 className="text-2xl font-semibold text-slate-900">เกี่ยวกับ GameReview</h1>
-      <p className="mt-3 leading-relaxed text-slate-600">
+      <p className="mt-3 leading-relaxed text-slate-600 whitespace-pre-line">
         GameReview เป็นเว็บไซต์สำหรับค้นหาและรีวิวเกม จัดทำขึ้นเป็นส่วนหนึ่งของรายวิชา 520 341 Client Side Programming 
         และ 520 342 Server Side Programming เพื่อฝึกพัฒนาเว็บด้วย React และการเชื่อมต่อ API
         
