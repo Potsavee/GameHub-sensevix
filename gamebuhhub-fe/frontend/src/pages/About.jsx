@@ -2,15 +2,19 @@ function About() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 md:px-6">
       <h1 className="text-2xl font-semibold text-slate-900">เกี่ยวกับ GameReview</h1>
-      <p className="mt-3 leading-relaxed text-slate-600 whitespace-pre-line">
-        GameReview เป็นเว็บไซต์สำหรับค้นหาและรีวิวเกม จัดทำขึ้นเป็นส่วนหนึ่งของรายวิชา 520 341 Client Side Programming 
-        และ 520 342 Server Side Programming เพื่อฝึกพัฒนาเว็บด้วย React และการเชื่อมต่อ API
-        
-        ผู้ใช้สามารถค้นหาเกม ดูรายละเอียดและภาพตัวอย่าง เขียนรีวิว และบันทึกเกมที่สนใจไว้ใน Wishlist ได้ นอกจากนี้ยังมีระบบสมาชิก 
-        การจัดการสิทธิ์ Admin และเกม Quiz สำหรับทายข้อมูลเกม
-        
-        หน้าเว็บใช้ React Fetch API เรียก Go backend ซึ่งเชื่อม IGDB และ Supabase PostgreSQL
-      </p>
+      <div className="mt-3 space-y-4 leading-relaxed text-slate-600">
+        <p>
+          GameReview เป็นเว็บไซต์สำหรับค้นหาและรีวิวเกม จัดทำขึ้นเป็นส่วนหนึ่งของรายวิชา 520 341 Client Side Programming 
+          และ 520 342 Server Side Programming เพื่อฝึกพัฒนาเว็บด้วย React และการเชื่อมต่อ API
+        </p>
+        <p>
+          ผู้ใช้สามารถค้นหาเกม ดูรายละเอียดและภาพตัวอย่าง เขียนรีวิว และบันทึกเกมที่สนใจไว้ใน Wishlist ได้ นอกจากนี้ยังมีระบบสมาชิก 
+          การจัดการสิทธิ์ Admin และเกม Quiz สำหรับทายข้อมูลเกม
+        </p>
+        <p>
+          หน้าเว็บใช้ React Fetch API เรียก Go backend ซึ่งเชื่อม IGDB และ Supabase PostgreSQL
+        </p>
+      </div>
 
       <h2 className="mt-8 font-medium text-slate-900">ทีม เซ่นซีวิค</h2>
       <p className="text-sm text-slate-500"></p>
