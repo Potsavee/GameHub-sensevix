@@ -1,4 +1,4 @@
-# Backend-sensevix-
+# GameHub-sensevix
 โปรเจกต์ GameReview จัดทำขึ้นเป็น Term Project สำหรับรายวิชา BE-FE เพื่อประยุกต์ใช้ความรู้ด้านการพัฒนา Frontend และ Backend เข้าด้วยกัน โดยพัฒนาเว็บสำหรับค้นหาและรีวิวเกม
 
 Frontend พัฒนาด้วย React และเรียกใช้งาน Backend ผ่าน Fetch API ส่วน Backend พัฒนาด้วย Go เพื่อจัดการ API การยืนยันตัวตน และการเชื่อมต่อฐานข้อมูล PostgreSQL บน Supabase นอกจากนี้ยังเชื่อมต่อ IGDB API เพื่อนำข้อมูลเกมมาแสดงบนเว็บไซต์
