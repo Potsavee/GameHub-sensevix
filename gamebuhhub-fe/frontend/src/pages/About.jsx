@@ -5,7 +5,7 @@ function About() {
       <div className="mt-3 space-y-4 leading-relaxed text-slate-600">
         <p>
           GameReview เป็นเว็บไซต์สำหรับค้นหาและรีวิวเกม จัดทำขึ้นเป็นส่วนหนึ่งของรายวิชา 520 341 Client Side Programming 
-          และ 520 342 Server Side Programming เพื่อฝึกพัฒนาเว็บด้วย React และการเชื่อมต่อ API
+          และ 520 342 Server Side Programming เพื่อฝึกพัฒนา frontend ด้วย React และการเชื่อมต่อ API จาก IGDB ผ่าน Go backend
         </p>
         <p>
           ผู้ใช้สามารถค้นหาเกม ดูรายละเอียดและภาพตัวอย่าง เขียนรีวิว และบันทึกเกมที่สนใจไว้ใน Wishlist ได้ นอกจากนี้ยังมีระบบสมาชิก 
